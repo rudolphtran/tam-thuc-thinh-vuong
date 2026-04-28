@@ -19,6 +19,14 @@
   html {
     scroll-behavior: smooth;
   }
+  button:not(:disabled),
+  [role="button"]:not([aria-disabled="true"]) {
+    cursor: pointer;
+  }
+  button:disabled,
+  [role="button"][aria-disabled="true"] {
+    cursor: not-allowed;
+  }
   h1, h2, h3, h4, h5, h6 {
     @apply font-semibold tracking-tight;
   }
