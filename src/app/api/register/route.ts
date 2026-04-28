@@ -37,7 +37,15 @@ export async function POST(req: Request) {
       { status: 201 }
     );
   } catch (err) {
-    console.error("Register error:", err);
+    const error = err as { name?: string; message?: string; code?: string | number };
+    console.error("Register error", {
+      name: error?.name,
+      message: error?.message,
+      code: error?.code,
+      hasMongoUri: Boolean(process.env.MONGODB_URI),
+      nextAuthUrl: process.env.NEXTAUTH_URL,
+      nodeEnv: process.env.NODE_ENV,
+    });
     return NextResponse.json(
       { error: "Lỗi hệ thống, vui lòng thử lại" },
       { status: 500 }

@@ -8,7 +8,7 @@ export default function AuthLayout({
       <div className="w-full max-w-md">
         <div className="text-center mb-8">
           <div className="inline-flex items-center gap-2 text-white mb-2">
-            <span className="text-amber-400 text-3xl">✦</span>
+            <span className="text-green-400 text-3xl">✦</span>
             <span className="font-semibold text-xl tracking-tight">
               Tâm Thức Thịnh Vượng
             </span>

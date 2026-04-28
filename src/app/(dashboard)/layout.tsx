@@ -16,7 +16,7 @@ export default async function DashboardLayout({
       <header className="hidden md:flex gradient-prosperity text-white sticky top-0 z-40 shadow-sm">
         <div className="max-w-5xl mx-auto w-full px-6 h-14 flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <span className="text-amber-400 text-lg">✦</span>
+            <span className="text-green-400 text-lg">✦</span>
             <span className="font-semibold text-sm tracking-tight">
               Tâm Thức Thịnh Vượng
             </span>
@@ -29,7 +29,7 @@ export default async function DashboardLayout({
       <header className="md:hidden gradient-prosperity text-white sticky top-0 z-40 shadow-sm">
         <div className="px-4 h-12 flex items-center justify-between">
           <div className="flex items-center gap-1.5">
-            <span className="text-amber-400 text-base">✦</span>
+            <span className="text-green-400 text-base">✦</span>
             <span className="font-semibold text-sm">Tâm Thức Thịnh Vượng</span>
           </div>
           <span className="text-stone-300 text-xs">

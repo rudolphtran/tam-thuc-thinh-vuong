@@ -54,7 +54,7 @@ export function SuccessJournal({ successes, onChange, error }: SuccessJournalPro
       <div className="space-y-2">
         {list.map((s, idx) => (
           <div key={idx} className="flex items-start gap-2">
-            <span className="mt-3 w-6 h-6 rounded-full bg-amber-100 text-amber-700 text-xs font-bold flex items-center justify-center shrink-0">
+            <span className="mt-3 w-6 h-6 rounded-full bg-green-100 text-[#006400] text-xs font-bold flex items-center justify-center shrink-0">
               {idx + 1}
             </span>
             <Textarea
@@ -82,7 +82,7 @@ export function SuccessJournal({ successes, onChange, error }: SuccessJournalPro
         variant="ghost"
         size="sm"
         onClick={addMore}
-        className="text-amber-600 hover:text-amber-700 hover:bg-amber-50"
+        className="text-[#006400] hover:text-green-800 hover:bg-green-50"
       >
         <Plus className="w-4 h-4" />
         Thêm thành công khác

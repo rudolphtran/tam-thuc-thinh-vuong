@@ -116,7 +116,7 @@ function EntryCard({ entry }: { entry: EntryDoc }) {
               <ul className="space-y-1">
                 {entry.successes.map((s, i) => (
                   <li key={i} className="text-sm text-stone-700 flex items-start gap-2">
-                    <span className="text-amber-500 font-bold shrink-0">{i + 1}.</span>
+                    <span className="text-[#006400] font-bold shrink-0">{i + 1}.</span>
                     {s}
                   </li>
                 ))}
@@ -253,14 +253,14 @@ export default function JournalPage() {
       {/* Entries */}
       {loading ? (
         <div className="flex justify-center py-12">
-          <Loader2 className="w-7 h-7 animate-spin text-amber-500" />
+          <Loader2 className="w-7 h-7 animate-spin text-[#006400]" />
         </div>
       ) : entries.length === 0 ? (
         <Card>
           <CardContent className="py-14 text-center">
             <p className="text-stone-400 text-sm">
               Chưa có ngày nào được hoàn thành.{" "}
-              <a href="/today" className="text-amber-600 font-medium hover:underline">
+              <a href="/today" className="text-[#006400] font-medium hover:underline">
                 Bắt đầu ngay hôm nay!
               </a>
             </p>

@@ -8,7 +8,7 @@ interface BadgeProps {
 
 export function Badge({ children, variant = "stone", className }: BadgeProps) {
   const variants = {
-    gold: "bg-amber-100 text-amber-800 border border-amber-200",
+    gold: "bg-green-100 text-[#006400] border border-green-200",
     violet: "bg-violet-100 text-violet-800 border border-violet-200",
     emerald: "bg-emerald-100 text-emerald-800 border border-emerald-200",
     blue: "bg-blue-100 text-blue-800 border border-blue-200",

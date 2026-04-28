@@ -45,7 +45,7 @@ export function MoneyLogger({
         />
       </div>
       {total > 0 && (
-        <p className="text-xs text-amber-700 font-medium">
+        <p className="text-xs text-[#006400] font-medium">
           Tổng hôm nay: {formatCurrency(total)}
         </p>
       )}

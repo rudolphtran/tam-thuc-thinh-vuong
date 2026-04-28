@@ -26,7 +26,7 @@ export const DAY_TYPE_LABELS: Record<DayType, string> = {
 };
 
 export const DAY_TYPE_COLORS: Record<DayType, string> = {
-  A: "from-amber-500 to-orange-600",
+  A: "from-green-500 to-[#006400]",
   B: "from-violet-500 to-purple-700",
   C: "from-emerald-500 to-teal-600",
   D: "from-blue-500 to-indigo-600",
@@ -34,7 +34,7 @@ export const DAY_TYPE_COLORS: Record<DayType, string> = {
 };
 
 export const DAY_TYPE_BG: Record<DayType, string> = {
-  A: "bg-amber-50 border-amber-200",
+  A: "bg-green-50 border-green-200",
   B: "bg-violet-50 border-violet-200",
   C: "bg-emerald-50 border-emerald-200",
   D: "bg-blue-50 border-blue-200",

@@ -125,7 +125,7 @@ export default function TodayPage() {
   if (loading) {
     return (
       <div className="flex items-center justify-center min-h-[60vh]">
-        <Loader2 className="w-8 h-8 animate-spin text-amber-500" />
+        <Loader2 className="w-8 h-8 animate-spin text-[#006400]" />
       </div>
     );
   }
@@ -137,8 +137,8 @@ export default function TodayPage() {
   if (submitted) {
     return (
       <div className="flex flex-col items-center justify-center min-h-[60vh] text-center gap-6">
-        <div className="w-20 h-20 rounded-full bg-amber-100 flex items-center justify-center">
-          <CheckCircle2 className="w-10 h-10 text-amber-500" />
+        <div className="w-20 h-20 rounded-full bg-green-100 flex items-center justify-center">
+          <CheckCircle2 className="w-10 h-10 text-[#006400]" />
         </div>
         <div>
           <h2 className="text-2xl font-bold text-stone-900 mb-2">Xuất sắc! 🎉</h2>

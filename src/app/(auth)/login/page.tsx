@@ -86,7 +86,7 @@ export default function LoginPage() {
           Chưa có tài khoản?{" "}
           <Link
             href="/register"
-            className="text-amber-600 font-medium hover:text-amber-700 transition-colors"
+            className="text-[#006400] font-medium hover:text-green-800 transition-colors"
           >
             Đăng ký ngay
           </Link>

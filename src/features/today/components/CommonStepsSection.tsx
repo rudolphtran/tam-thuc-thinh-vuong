@@ -23,12 +23,12 @@ export function CommonStepsSection({ checked, onToggle }: CommonStepsProps) {
           className={cn(
             "w-full flex items-start gap-3 p-3 rounded-xl text-left transition-all",
             checked[idx]
-              ? "bg-amber-50 border border-amber-200"
-              : "bg-stone-50 border border-stone-200 hover:border-amber-200"
+              ? "bg-green-50 border border-green-200"
+              : "bg-stone-50 border border-stone-200 hover:border-green-200"
           )}
         >
           {checked[idx] ? (
-            <CheckCircle2 className="w-5 h-5 text-amber-500 mt-0.5 shrink-0" />
+            <CheckCircle2 className="w-5 h-5 text-[#006400] mt-0.5 shrink-0" />
           ) : (
             <Circle className="w-5 h-5 text-stone-300 mt-0.5 shrink-0" />
           )}
@@ -36,7 +36,7 @@ export function CommonStepsSection({ checked, onToggle }: CommonStepsProps) {
             className={cn(
               "text-sm",
               checked[idx]
-                ? "text-amber-800 line-through"
+                ? "text-green-800 line-through"
                 : "text-stone-700"
             )}
           >

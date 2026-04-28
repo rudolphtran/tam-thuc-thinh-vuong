@@ -42,7 +42,7 @@ export default function LandingPage() {
       <header className="gradient-prosperity text-white">
         <nav className="max-w-5xl mx-auto px-6 py-5 flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <span className="text-amber-400 text-2xl">✦</span>
+            <span className="text-green-400 text-2xl">✦</span>
             <span className="font-semibold text-lg tracking-tight">
               Tâm Thức Thịnh Vượng
             </span>
@@ -60,13 +60,13 @@ export default function LandingPage() {
         </nav>
 
         <div className="max-w-3xl mx-auto px-6 py-24 text-center">
-          <div className="inline-flex items-center gap-2 bg-white/10 border border-white/20 rounded-full px-4 py-1.5 text-sm text-amber-300 mb-8">
+          <div className="inline-flex items-center gap-2 bg-white/10 border border-white/20 rounded-full px-4 py-1.5 text-sm text-green-300 mb-8">
             <Sparkles className="w-3.5 h-3.5" />
             Thực hành hằng ngày
           </div>
           <h1 className="text-4xl sm:text-5xl md:text-6xl font-bold leading-tight mb-6 text-balance">
             Xây dựng{" "}
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-amber-300 to-orange-400">
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-green-300 to-green-500">
               tâm thức thịnh vượng
             </span>{" "}
             mỗi ngày

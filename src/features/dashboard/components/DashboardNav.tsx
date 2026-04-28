@@ -63,13 +63,13 @@ export function DashboardNav({ userName, mode }: DashboardNavProps) {
               href={href}
               className={cn(
                 "flex flex-col items-center gap-1 px-4 py-1.5 rounded-xl transition-colors min-w-[64px]",
-                active ? "text-amber-600" : "text-stone-400 hover:text-stone-700"
+                active ? "text-[#006400]" : "text-stone-400 hover:text-stone-700"
               )}
             >
-              <Icon className={cn("w-5 h-5", active && "fill-amber-100")} />
+              <Icon className={cn("w-5 h-5", active && "fill-green-100")} />
               <span className="text-[10px] font-medium">{label}</span>
               {active && (
-                <span className="w-1 h-1 rounded-full bg-amber-500 -mt-0.5" />
+                <span className="w-1 h-1 rounded-full bg-[#006400] -mt-0.5" />
               )}
             </Link>
           );

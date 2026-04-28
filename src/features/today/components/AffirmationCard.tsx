@@ -17,7 +17,7 @@ export function AffirmationCard({ read, onMarkRead }: AffirmationCardProps) {
     <div
       className={cn(
         "rounded-2xl border-2 overflow-hidden transition-all",
-        read ? "border-amber-300 bg-amber-50" : "border-stone-200 bg-white"
+        read ? "border-green-300 bg-green-50" : "border-stone-200 bg-white"
       )}
     >
       <div className="px-5 py-4">
@@ -57,12 +57,12 @@ export function AffirmationCard({ read, onMarkRead }: AffirmationCardProps) {
           className={cn(
             "flex items-center gap-2 text-sm font-medium transition-colors",
             read
-              ? "text-amber-600 cursor-default"
-              : "text-stone-500 hover:text-amber-600"
+              ? "text-[#006400] cursor-default"
+              : "text-stone-500 hover:text-[#006400]"
           )}
         >
           <CheckCircle2
-            className={cn("w-4 h-4", read ? "text-amber-500" : "text-stone-300")}
+            className={cn("w-4 h-4", read ? "text-[#006400]" : "text-stone-300")}
           />
           {read ? "Đã đọc xong ✓" : "Đánh dấu đã đọc"}
         </button>
