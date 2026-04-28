@@ -1,11 +1,7 @@
 import mongoose from "mongoose";
 
-const MONGODB_URI = process.env.MONGODB_URI!;
+const MONGODB_URI = process.env.MONGODB_URI;
 const MONGODB_DB_NAME = process.env.MONGODB_DB_NAME || "tam-thuc-thinh-vuong";
-
-if (!MONGODB_URI) {
-  throw new Error("MONGODB_URI is not defined in environment variables");
-}
 
 function getMongoTarget(uri: string) {
   try {
@@ -40,6 +36,18 @@ global.__mongoose = cached;
 
 export async function connectDB(): Promise<typeof mongoose> {
   if (cached.conn) return cached.conn;
+
+  if (!MONGODB_URI) {
+    const error = new Error("MONGODB_URI is not defined in environment variables");
+    console.error("MongoDB connection error", {
+      host: "(missing)",
+      database: MONGODB_DB_NAME,
+      name: error.name,
+      message: error.message,
+      code: "MISSING_MONGODB_URI",
+    });
+    throw error;
+  }
 
   if (!cached.promise) {
     const parsedTarget = getMongoTarget(MONGODB_URI);

@@ -4,6 +4,19 @@ import { connectDB } from "@/lib/mongodb";
 import { User } from "@/models/User";
 import { registerSchema } from "@/validation/auth";
 
+function toDebugPayload(err: unknown) {
+  const error = err as { name?: string; message?: string; code?: string | number };
+  return {
+    name: error?.name ?? "UnknownError",
+    message: error?.message ?? "Unknown error",
+    code: error?.code ?? null,
+    hasMongoUri: Boolean(process.env.MONGODB_URI),
+    hasAuthSecret: Boolean(process.env.AUTH_SECRET),
+    nextAuthUrl: process.env.NEXTAUTH_URL ?? null,
+    nodeEnv: process.env.NODE_ENV,
+  };
+}
+
 export async function POST(req: Request) {
   try {
     const body = await req.json();
@@ -37,17 +50,13 @@ export async function POST(req: Request) {
       { status: 201 }
     );
   } catch (err) {
-    const error = err as { name?: string; message?: string; code?: string | number };
-    console.error("Register error", {
-      name: error?.name,
-      message: error?.message,
-      code: error?.code,
-      hasMongoUri: Boolean(process.env.MONGODB_URI),
-      nextAuthUrl: process.env.NEXTAUTH_URL,
-      nodeEnv: process.env.NODE_ENV,
-    });
+    const debug = toDebugPayload(err);
+    console.error("Register error", debug);
     return NextResponse.json(
-      { error: "Lỗi hệ thống, vui lòng thử lại" },
+      {
+        error: "Lỗi hệ thống, vui lòng thử lại",
+        debug,
+      },
       { status: 500 }
     );
   }
