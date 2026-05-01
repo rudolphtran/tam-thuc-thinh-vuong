@@ -49,7 +49,7 @@ export default function DashboardPage() {
     userName,
   } = data;
 
-  const firstName = userName.split(" ").slice(-1)[0];
+  const firstName = userName?.split(" ").slice(-1)[0] ?? "bạn";
   const totalDeposit = totalEducationDeposit + totalInvestmentDeposit;
 
   return (
@@ -75,7 +75,7 @@ export default function DashboardPage() {
               {DAY_TYPE_LABELS[currentDayType]}
             </h2>
           </div>
-          <Badge variant={DAY_TYPE_BADGE[currentDayType]}>Dạng {currentDayType}</Badge>
+          {/* <Badge variant={DAY_TYPE_BADGE[currentDayType]}>Dạng {currentDayType}</Badge> */}
         </div>
         <Link href="/today">
           <Button size="md" className="w-full sm:w-auto">

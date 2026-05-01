@@ -166,9 +166,9 @@ export default function TodayPage() {
               {DAY_TYPE_LABELS[dayType]}
             </h1>
           </div>
-          <Badge variant={DAY_TYPE_BADGE[dayType]} className="shrink-0 text-sm px-3 py-1">
+          {/* <Badge variant={DAY_TYPE_BADGE[dayType]} className="shrink-0 text-sm px-3 py-1">
             Dạng {dayType}
-          </Badge>
+          </Badge> */}
         </div>
       </div>
 

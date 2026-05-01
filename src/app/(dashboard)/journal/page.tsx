@@ -58,7 +58,7 @@ function EntryCard({ entry }: { entry: EntryDoc }) {
           <div className="flex-1 min-w-0">
             <div className="flex items-center gap-2 flex-wrap mb-1">
               <span className="font-bold text-stone-800">Ngày {entry.dayNumber}</span>
-              <Badge variant={DAY_TYPE_BADGE[entry.dayType]}>Dạng {entry.dayType}</Badge>
+              {/* <Badge variant={DAY_TYPE_BADGE[entry.dayType]}>Dạng {entry.dayType}</Badge> */}
               {entry.completed && (
                 <CheckCircle2 className="w-4 h-4 text-emerald-500 shrink-0" />
               )}
@@ -245,7 +245,7 @@ export default function JournalPage() {
                 : "bg-white border border-stone-200 text-stone-600 hover:border-stone-300"
             }`}
           >
-            Dạng {type}
+            {/* Dạng {type} */}
           </button>
         ))}
       </div>
