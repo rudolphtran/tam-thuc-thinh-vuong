@@ -147,7 +147,7 @@ export default function DashboardPage() {
       )}
 
       {/* Cycle indicator */}
-      <Card>
+      {/* <Card>
         <CardContent className="p-5">
           <h3 className="text-sm font-semibold text-stone-700 mb-4">Chu kỳ 5 ngày</h3>
           <div className="flex gap-2">
@@ -172,7 +172,7 @@ export default function DashboardPage() {
             ))}
           </div>
         </CardContent>
-      </Card>
+      </Card> */}
 
       {/* Quick link to journal */}
       <Link href="/journal">
