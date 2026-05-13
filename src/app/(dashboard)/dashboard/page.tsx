@@ -4,8 +4,7 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 import { Card, CardContent } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
-import { Badge } from "@/components/ui/Badge";
-import { DAY_TYPE_LABELS, DAY_TYPE_COLORS, DAY_TYPE_BG, DAY_TYPE_BADGE } from "@/features/dashboard/components/dayTypeHelpers";
+import { DAY_TYPE_LABELS, DAY_TYPE_BG } from "@/features/dashboard/components/dayTypeHelpers";
 import { formatCurrency } from "@/lib/utils";
 import { Sparkles, TrendingUp, BookOpen, GraduationCap, Loader2 } from "lucide-react";
 import type { DayType } from "@/types/practice";
@@ -57,7 +56,7 @@ export default function DashboardPage() {
       {/* Greeting */}
       <div>
         <h1 className="text-2xl font-bold text-stone-900">
-          Chào, {firstName}! 👋
+          Chào, {userName}! 👋
         </h1>
         <p className="text-stone-500 text-sm mt-1">
           Hành trình của bạn đang tiến về phía trước.
@@ -75,7 +74,6 @@ export default function DashboardPage() {
               {DAY_TYPE_LABELS[currentDayType]}
             </h2>
           </div>
-          {/* <Badge variant={DAY_TYPE_BADGE[currentDayType]}>Dạng {currentDayType}</Badge> */}
         </div>
         <Link href="/today">
           <Button size="md" className="w-full sm:w-auto">

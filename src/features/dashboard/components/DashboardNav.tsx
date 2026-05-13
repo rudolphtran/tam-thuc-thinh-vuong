@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { signOut } from "next-auth/react";
-import { LayoutDashboard, BookOpen, Sparkles, LogOut } from "lucide-react";
+import { LayoutDashboard, BookOpen, Sparkles, LogOut, MessageSquare } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/Button";
 
@@ -11,14 +11,14 @@ const navItems = [
   { href: "/dashboard", label: "Tổng quan", icon: LayoutDashboard },
   { href: "/today", label: "Hôm nay", icon: Sparkles },
   { href: "/journal", label: "Nhật ký", icon: BookOpen },
+  { href: "/messages", label: "Thông điệp", icon: MessageSquare },
 ];
 
 interface DashboardNavProps {
-  userName: string;
   mode: "top" | "bottom";
 }
 
-export function DashboardNav({ userName, mode }: DashboardNavProps) {
+export function DashboardNav({ mode }: DashboardNavProps) {
   const pathname = usePathname();
 
   if (mode === "top") {

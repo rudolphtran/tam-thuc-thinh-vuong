@@ -1,10 +1,10 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
+import Image from "next/image";
 import { Card, CardContent } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
-import { Badge } from "@/components/ui/Badge";
 import { AffirmationCard } from "@/features/today/components/AffirmationCard";
 import { CommonStepsSection } from "@/features/today/components/CommonStepsSection";
 import { MoneyLogger } from "@/features/today/components/MoneyLogger";
@@ -17,15 +17,59 @@ import { DayTypeEForm } from "@/features/today/components/DayTypeEForm";
 import { DAY_TYPE_LABELS, DAY_TYPE_COLORS, DAY_TYPE_BG } from "@/lib/day-cycle";
 import { cn } from "@/lib/utils";
 import type { DayType } from "@/types/practice";
-import { CheckCircle2, Loader2 } from "lucide-react";
+import { CheckCircle2, Loader2, Upload, X } from "lucide-react";
 
-const DAY_TYPE_BADGE: Record<DayType, "gold" | "violet" | "emerald" | "blue" | "rose"> = {
-  A: "gold",
-  B: "violet",
-  C: "emerald",
-  D: "blue",
-  E: "rose",
-};
+const MAX_IMAGE_SIZE_BYTES = 2 * 1024 * 1024;
+const MAX_IMAGE_DIMENSION = 1600;
+
+function loadImageFromFile(file: File): Promise<HTMLImageElement> {
+  return new Promise((resolve, reject) => {
+    const objectUrl = URL.createObjectURL(file);
+    const image = new window.Image();
+
+    image.onload = () => {
+      URL.revokeObjectURL(objectUrl);
+      resolve(image);
+    };
+    image.onerror = () => {
+      URL.revokeObjectURL(objectUrl);
+      reject(new Error("Image load failed"));
+    };
+
+    image.src = objectUrl;
+  });
+}
+
+async function compressImage(file: File): Promise<File> {
+  const image = await loadImageFromFile(file);
+  const scale = Math.min(1, MAX_IMAGE_DIMENSION / Math.max(image.width, image.height));
+  const width = Math.max(1, Math.round(image.width * scale));
+  const height = Math.max(1, Math.round(image.height * scale));
+
+  const canvas = document.createElement("canvas");
+  canvas.width = width;
+  canvas.height = height;
+
+  const ctx = canvas.getContext("2d");
+  if (!ctx) {
+    throw new Error("Canvas context unavailable");
+  }
+
+  ctx.drawImage(image, 0, 0, width, height);
+
+  const blob = await new Promise<Blob | null>((resolve) => {
+    canvas.toBlob(resolve, "image/jpeg", 0.8);
+  });
+
+  if (!blob) {
+    throw new Error("Image compression failed");
+  }
+
+  return new File([blob], `${file.name.replace(/\.[^/.]+$/, "") || "daily-image"}.jpg`, {
+    type: "image/jpeg",
+    lastModified: Date.now(),
+  });
+}
 
 interface TodayState {
   dayNumber: number;
@@ -48,10 +92,18 @@ export default function TodayPage() {
   const [investment, setInvestment] = useState("");
   const [successes, setSuccesses] = useState<string[]>(Array(5).fill(""));
   const [successError, setSuccessError] = useState("");
+  const [dailyImageUrl, setDailyImageUrl] = useState("");
+  const [imageUploadUrl, setImageUploadUrl] = useState("");
+  const [imageUploadPublicId, setImageUploadPublicId] = useState("");
+  const [persistedImagePublicId, setPersistedImagePublicId] = useState("");
+  const [pendingImageFile, setPendingImageFile] = useState<File | null>(null);
+  const [imageUploading, setImageUploading] = useState(false);
+  const [imageError, setImageError] = useState("");
   // Day-type specific fields
   const [typeFields, setTypeFields] = useState<Record<string, unknown>>({});
+  const imageInputRef = useRef<HTMLInputElement | null>(null);
 
-  const fetchToday = useCallback(async () => {
+  async function fetchToday() {
     try {
       const res = await fetch("/api/entries");
       const data = await res.json();
@@ -63,16 +115,30 @@ export default function TodayPage() {
       if (data.entry?.completed) {
         setSubmitted(true);
       }
+      if (typeof data.entry?.dailyImageUrl === "string") {
+        setDailyImageUrl(data.entry.dailyImageUrl);
+        setImageUploadUrl(data.entry.dailyImageUrl);
+      }
+      if (typeof data.entry?.dailyImagePublicId === "string") {
+        setImageUploadPublicId(data.entry.dailyImagePublicId);
+        setPersistedImagePublicId(data.entry.dailyImagePublicId);
+      }
     } catch {
       // silently ignore
     } finally {
       setLoading(false);
     }
-  }, []);
+  }
 
   useEffect(() => {
-    fetchToday();
-  }, [fetchToday]);
+    const timeoutId = window.setTimeout(() => {
+      void fetchToday();
+    }, 0);
+
+    return () => {
+      window.clearTimeout(timeoutId);
+    };
+  }, []);
 
   function toggleCommon(idx: number) {
     setCommonChecks((c) => c.map((v, i) => (i === idx ? !v : v)));
@@ -80,6 +146,112 @@ export default function TodayPage() {
 
   function updateTypeField(field: string, value: unknown) {
     setTypeFields((f) => ({ ...f, [field]: value }));
+  }
+
+  async function deleteUploadedImage(publicId: string) {
+    try {
+      await fetch("/api/uploads/daily-image", {
+        method: "DELETE",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ publicId }),
+      });
+    } catch {
+      // Ignore cleanup failures on best-effort deletion
+    }
+  }
+
+  function clearSelectedImage() {
+    if (imageUploadPublicId && imageUploadPublicId !== persistedImagePublicId) {
+      void deleteUploadedImage(imageUploadPublicId);
+    }
+    setDailyImageUrl("");
+    setImageUploadUrl("");
+    setImageUploadPublicId("");
+    setPendingImageFile(null);
+    setImageError("");
+    if (imageInputRef.current) {
+      imageInputRef.current.value = "";
+    }
+  }
+
+  async function handleImagePick(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    setImageError("");
+
+    if (imageUploadPublicId && imageUploadPublicId !== persistedImagePublicId) {
+      void deleteUploadedImage(imageUploadPublicId);
+    }
+
+    setImageUploadUrl("");
+    setImageUploadPublicId("");
+
+    if (!file.type.startsWith("image/")) {
+      setImageError("Vui lòng chọn file ảnh hợp lệ");
+      clearSelectedImage();
+      return;
+    }
+
+    try {
+      const compressed = await compressImage(file);
+      if (compressed.size > MAX_IMAGE_SIZE_BYTES) {
+        setImageError("Ảnh sau khi nén vẫn quá lớn, vui lòng chọn ảnh khác");
+        clearSelectedImage();
+        return;
+      }
+
+      const reader = new FileReader();
+      reader.onload = () => {
+        if (typeof reader.result !== "string") {
+          setImageError("Không thể đọc ảnh, vui lòng thử lại");
+          clearSelectedImage();
+          return;
+        }
+        setPendingImageFile(compressed);
+        setDailyImageUrl(reader.result);
+      };
+      reader.onerror = () => {
+        setImageError("Không thể đọc ảnh, vui lòng thử lại");
+        clearSelectedImage();
+      };
+      reader.readAsDataURL(compressed);
+    } catch {
+      setImageError("Không thể nén ảnh, vui lòng thử ảnh khác");
+      clearSelectedImage();
+    }
+  }
+
+  async function uploadImageIfNeeded() {
+    if (!pendingImageFile) {
+      return { url: imageUploadUrl, publicId: imageUploadPublicId };
+    }
+
+    setImageUploading(true);
+    try {
+      const formData = new FormData();
+      formData.set("image", pendingImageFile);
+
+      const uploadRes = await fetch("/api/uploads/daily-image", {
+        method: "POST",
+        body: formData,
+      });
+
+      const data = await uploadRes.json();
+      if (!uploadRes.ok) {
+        throw new Error(data.error ?? "Không thể tải ảnh lên");
+      }
+
+      const uploadedUrl = String(data.url ?? "");
+      const uploadedPublicId = String(data.publicId ?? "");
+      setImageUploadUrl(uploadedUrl);
+      setImageUploadPublicId(uploadedPublicId);
+      setPendingImageFile(null);
+      setDailyImageUrl(uploadedUrl);
+      return { url: uploadedUrl, publicId: uploadedPublicId };
+    } finally {
+      setImageUploading(false);
+    }
   }
 
   async function handleSubmit(e: React.FormEvent) {
@@ -96,6 +268,8 @@ export default function TodayPage() {
 
     setSubmitting(true);
     try {
+      const uploadedImage = await uploadImageIfNeeded();
+
       const res = await fetch("/api/entries", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -105,6 +279,8 @@ export default function TodayPage() {
           investmentDeposit: parseFloat(investment) || 0,
           successes: validSuccesses,
           typeFields,
+          dailyImageUrl: uploadedImage.url || undefined,
+          dailyImagePublicId: uploadedImage.publicId || undefined,
         }),
       });
 
@@ -114,9 +290,14 @@ export default function TodayPage() {
         return;
       }
 
+      setPersistedImagePublicId(uploadedImage.publicId);
       setSubmitted(true);
-    } catch {
-      setSubmitError("Lỗi kết nối, vui lòng thử lại");
+    } catch (error) {
+      if (error instanceof Error) {
+        setSubmitError(error.message);
+      } else {
+        setSubmitError("Lỗi kết nối, vui lòng thử lại");
+      }
     } finally {
       setSubmitting(false);
     }
@@ -267,6 +448,60 @@ export default function TodayPage() {
         </CardContent>
       </Card>
 
+      {/* Daily image */}
+      <Card>
+        <CardContent>
+          <div className="space-y-3">
+            <div>
+              <h2 className="font-semibold text-stone-800 text-sm">Ảnh hôm nay (tuỳ chọn)</h2>
+              <p className="text-xs text-stone-500 mt-1">Tải lên 1 ảnh để lưu lại hành trình của bạn (tối đa 2MB).</p>
+            </div>
+
+            <label
+              htmlFor="daily-image-upload"
+              className="flex items-center justify-center gap-2 rounded-xl border border-dashed border-stone-300 px-4 py-4 text-sm text-stone-600 hover:border-[#006400] hover:text-[#006400] transition-colors cursor-pointer"
+            >
+              <Upload className="w-4 h-4" />
+              Chọn ảnh từ thiết bị
+            </label>
+            <input
+              ref={imageInputRef}
+              id="daily-image-upload"
+              type="file"
+              accept="image/*"
+              onChange={handleImagePick}
+              className="hidden"
+            />
+
+            {imageError && (
+              <p className="text-xs text-red-600">{imageError}</p>
+            )}
+
+            {dailyImageUrl && (
+              <div className="space-y-2">
+                <div className="relative aspect-[4/3] w-full overflow-hidden rounded-xl border border-stone-200 bg-stone-100">
+                  <Image
+                    src={dailyImageUrl}
+                    alt="Ảnh thực hành hôm nay"
+                    fill
+                    className="object-cover"
+                    unoptimized
+                  />
+                </div>
+                <button
+                  type="button"
+                  onClick={clearSelectedImage}
+                  className="inline-flex items-center gap-1 text-xs text-stone-500 hover:text-red-600 transition-colors"
+                >
+                  <X className="w-3.5 h-3.5" />
+                  Xoá ảnh đã chọn
+                </button>
+              </div>
+            )}
+          </div>
+        </CardContent>
+      </Card>
+
       {/* Submit */}
       {submitError && (
         <div className="bg-red-50 border border-red-200 text-red-700 text-sm rounded-xl px-4 py-3">
@@ -277,10 +512,10 @@ export default function TodayPage() {
       <Button
         type="submit"
         size="lg"
-        loading={submitting}
+        loading={submitting || imageUploading}
         className="w-full shadow-lg"
       >
-        Hoàn thành ngày {dayNumber} ✓
+        {imageUploading ? "Đang tải ảnh..." : `Hoàn thành ngày ${dayNumber} ✓`}
       </Button>
     </form>
   );

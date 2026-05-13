@@ -6,6 +6,8 @@ export interface IDailyEntry extends Document {
   dayNumber: number;
   dayType: DayType;
   completed: boolean;
+  dailyImageUrl: string;
+  dailyImagePublicId: string;
   // Bước chung
   affirmationRead: boolean;
   educationDeposit: number;
@@ -23,6 +25,8 @@ const DailyEntrySchema = new Schema<IDailyEntry>(
     dayNumber: { type: Number, required: true, min: 1 },
     dayType: { type: String, enum: ["A", "B", "C", "D", "E"], required: true },
     completed: { type: Boolean, default: false },
+    dailyImageUrl: { type: String, default: "" },
+    dailyImagePublicId: { type: String, default: "" },
     affirmationRead: { type: Boolean, default: false },
     educationDeposit: { type: Number, default: 0, min: 0 },
     investmentDeposit: { type: Number, default: 0, min: 0 },

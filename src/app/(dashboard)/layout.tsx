@@ -1,6 +1,7 @@
 import { auth } from "@/lib/auth";
 import { redirect } from "next/navigation";
 import { DashboardNav } from "@/features/dashboard/components/DashboardNav";
+import { DashboardWrapper } from "@/features/dashboard/components/DashboardWrapper";
 
 export default async function DashboardLayout({
   children,
@@ -21,7 +22,7 @@ export default async function DashboardLayout({
               Tâm Thức Thịnh Vượng
             </span>
           </div>
-          <DashboardNav userName={session.user?.name ?? ""} mode="top" />
+          <DashboardNav mode="top" />
         </div>
       </header>
 
@@ -38,14 +39,14 @@ export default async function DashboardLayout({
         </div>
       </header>
 
-      {/* Content */}
-      <main className="flex-1 pb-20 md:pb-0">
+      {/* Message Banner */}
+      <DashboardWrapper>
         <div className="max-w-3xl mx-auto px-4 sm:px-6 py-6">{children}</div>
-      </main>
+      </DashboardWrapper>
 
       {/* Bottom nav — mobile */}
       <div className="md:hidden fixed bottom-0 inset-x-0 z-40">
-        <DashboardNav userName={session.user?.name ?? ""} mode="bottom" />
+        <DashboardNav mode="bottom" />
       </div>
     </div>
   );

@@ -6,6 +6,8 @@ export interface DailyEntryBase {
   educationDeposit: number;
   investmentDeposit: number;
   successes: string[]; // ít nhất 5
+  dailyImageUrl?: string;
+  dailyImagePublicId?: string;
 
   // Loại ngày
   dayType: DayType;

@@ -12,7 +12,7 @@ export function DayTypeAForm({ customAffirmation, emotionDescription, onChange }
   return (
     <div className="space-y-5">
       <div className="bg-green-50 border border-green-200 rounded-xl px-4 py-3 text-sm text-green-800">
-        <strong>Bước 5:</strong> VAKS — Hình dung &amp; cảm nhận <em>"Tôi thịnh vượng về tài chính"</em> thật sâu.
+        <strong>Bước 5:</strong> VAKS — Hình dung &amp; cảm nhận <em>&ldquo;Tôi thịnh vượng về tài chính&rdquo;</em> thật sâu.
       </div>
 
       <Textarea

@@ -1,10 +1,10 @@
 "use client";
 
 import { useEffect, useState, useCallback } from "react";
+import Image from "next/image";
 import { Card, CardContent } from "@/components/ui/Card";
-import { Badge } from "@/components/ui/Badge";
 import { Button } from "@/components/ui/Button";
-import { DAY_TYPE_LABELS, DAY_TYPE_BG, DAY_TYPE_BADGE } from "@/features/dashboard/components/dayTypeHelpers";
+import { DAY_TYPE_LABELS, DAY_TYPE_BG } from "@/features/dashboard/components/dayTypeHelpers";
 import { formatCurrency, formatDate } from "@/lib/utils";
 import { Loader2, ChevronDown, ChevronUp, CheckCircle2, Share2 } from "lucide-react";
 import type { DayType } from "@/types/practice";
@@ -18,6 +18,7 @@ interface EntryDoc {
   educationDeposit: number;
   investmentDeposit: number;
   successes: string[];
+  dailyImageUrl?: string;
   typeFields: Record<string, unknown>;
   createdAt: string;
 }
@@ -124,6 +125,21 @@ function EntryCard({ entry }: { entry: EntryDoc }) {
             </div>
           )}
 
+          {entry.dailyImageUrl && (
+            <div>
+              <p className="text-xs font-semibold text-stone-500 uppercase tracking-wide mb-2">Ảnh hôm nay</p>
+              <div className="relative aspect-[4/3] w-full overflow-hidden rounded-xl border border-white/70 bg-white">
+                <Image
+                  src={entry.dailyImageUrl}
+                  alt={`Ảnh ngày ${entry.dayNumber}`}
+                  fill
+                  className="object-cover"
+                  unoptimized
+                />
+              </div>
+            </div>
+          )}
+
           {/* Type-specific highlights */}
           {entry.typeFields && Object.keys(entry.typeFields).length > 0 && (
             <div>
@@ -204,14 +220,24 @@ export default function JournalPage() {
   );
 
   useEffect(() => {
-    setPage(1);
-    fetchEntries(1, filter, true);
+    const timeoutId = window.setTimeout(() => {
+      void fetchEntries(1, filter, true);
+    }, 0);
+
+    return () => {
+      window.clearTimeout(timeoutId);
+    };
   }, [filter, fetchEntries]);
 
   function loadMore() {
     const next = page + 1;
     setPage(next);
-    fetchEntries(next, filter, false);
+    void fetchEntries(next, filter, false);
+  }
+
+  function handleFilterChange(nextFilter: DayType | "") {
+    setFilter(nextFilter);
+    setPage(1);
   }
 
   const hasMore = entries.length < total;
@@ -226,7 +252,7 @@ export default function JournalPage() {
       {/* Filter */}
       <div className="flex gap-2 flex-wrap">
         <button
-          onClick={() => setFilter("")}
+          onClick={() => handleFilterChange("")}
           className={`px-3 py-1.5 rounded-full text-sm font-medium transition-colors ${
             filter === ""
               ? "bg-stone-900 text-white"
@@ -238,7 +264,7 @@ export default function JournalPage() {
         {DAY_TYPE_FILTER.map((type) => (
           <button
             key={type}
-            onClick={() => setFilter(type)}
+            onClick={() => handleFilterChange(type)}
             className={`px-3 py-1.5 rounded-full text-sm font-medium transition-colors ${
               filter === type
                 ? "bg-stone-900 text-white"
