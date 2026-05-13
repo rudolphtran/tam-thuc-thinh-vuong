@@ -15,7 +15,7 @@ const MessageSchema = new Schema<IMessage>(
     userId: { type: Schema.Types.ObjectId, ref: "User", required: true },
     title: { type: String, required: true, trim: true, maxlength: 200 },
     content: { type: String, required: true, trim: true, maxlength: 1000 },
-    isActive: { type: Boolean, default: false },
+    isActive: { type: Boolean, default: true },
     order: { type: Number, default: 0 },
   },
   { timestamps: true }

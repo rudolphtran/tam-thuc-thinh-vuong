@@ -50,7 +50,7 @@ export function MessageBanner({ onDismiss }: MessageBannerProps) {
     <div className="bg-white border-b border-stone-200 shadow-sm sticky top-12 md:top-14 z-30">
       <div className="max-w-5xl mx-auto px-4 sm:px-6 py-3">
         <div className="flex gap-4 items-start">
-          <div className="flex-1 min-w-0">
+          <div className="flex-1 min-w-0 text-center">
             {messages.map((message) => (
               <div key={message._id} className="mb-2 last:mb-0">
                 <div className="font-medium text-base text-emerald-700">

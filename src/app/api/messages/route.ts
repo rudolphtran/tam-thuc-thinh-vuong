@@ -38,7 +38,7 @@ export async function POST(req: Request) {
       userId: session.user.id,
       title: data.title,
       content: data.content,
-      isActive: false,
+      isActive: true,
       order: 0,
     });
 
