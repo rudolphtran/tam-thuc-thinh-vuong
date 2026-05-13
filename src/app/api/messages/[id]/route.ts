@@ -8,13 +8,13 @@ export async function GET(
 ) {
   try {
     const session = await auth();
-    if (!session) {
+    if (!session?.user?.id) {
       return Response.json({ error: "Unauthorized" }, { status: 401 });
     }
 
     const { id } = await params;
     await connectDB();
-    const message = await Message.findById(id);
+    const message = await Message.findOne({ _id: id, userId: session.user.id });
 
     if (!message) {
       return Response.json({ error: "Message not found" }, { status: 404 });
@@ -33,7 +33,7 @@ export async function PUT(
 ) {
   try {
     const session = await auth();
-    if (!session) {
+    if (!session?.user?.id) {
       return Response.json({ error: "Unauthorized" }, { status: 401 });
     }
 
@@ -41,8 +41,8 @@ export async function PUT(
     await connectDB();
     const data = await req.json();
 
-    const message = await Message.findByIdAndUpdate(
-      id,
+    const message = await Message.findOneAndUpdate(
+      { _id: id, userId: session.user.id },
       {
         title: data.title,
         content: data.content,
@@ -70,13 +70,13 @@ export async function DELETE(
 ) {
   try {
     const session = await auth();
-    if (!session) {
+    if (!session?.user?.id) {
       return Response.json({ error: "Unauthorized" }, { status: 401 });
     }
 
     const { id } = await params;
     await connectDB();
-    const message = await Message.findByIdAndDelete(id);
+    const message = await Message.findOneAndDelete({ _id: id, userId: session.user.id });
 
     if (!message) {
       return Response.json({ error: "Message not found" }, { status: 404 });
@@ -98,7 +98,7 @@ export async function PATCH(
 ) {
   try {
     const session = await auth();
-    if (!session) {
+    if (!session?.user?.id) {
       return Response.json({ error: "Unauthorized" }, { status: 401 });
     }
 
@@ -106,8 +106,8 @@ export async function PATCH(
     await connectDB();
     const data = await req.json();
 
-    const message = await Message.findByIdAndUpdate(
-      id,
+    const message = await Message.findOneAndUpdate(
+      { _id: id, userId: session.user.id },
       {
         isActive: data.isActive,
         order: data.order ?? 0,

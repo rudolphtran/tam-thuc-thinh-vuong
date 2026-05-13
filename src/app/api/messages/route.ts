@@ -1,17 +1,16 @@
 import { auth } from "@/lib/auth";
 import { connectDB } from "@/lib/mongodb";
 import { Message } from "@/models/Message";
-import { redirect } from "next/navigation";
 
-export async function GET(req: Request) {
+export async function GET() {
   try {
     const session = await auth();
-    if (!session) {
+    if (!session?.user?.id) {
       return Response.json({ error: "Unauthorized" }, { status: 401 });
     }
 
     await connectDB();
-    const messages = await Message.find({ isActive: true })
+    const messages = await Message.find({ userId: session.user.id, isActive: true })
       .sort({ order: 1, createdAt: -1 })
       .lean();
 
@@ -28,7 +27,7 @@ export async function GET(req: Request) {
 export async function POST(req: Request) {
   try {
     const session = await auth();
-    if (!session) {
+    if (!session?.user?.id) {
       return Response.json({ error: "Unauthorized" }, { status: 401 });
     }
 
@@ -36,6 +35,7 @@ export async function POST(req: Request) {
     const data = await req.json();
 
     const message = new Message({
+      userId: session.user.id,
       title: data.title,
       content: data.content,
       isActive: false,
